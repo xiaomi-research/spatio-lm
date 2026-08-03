@@ -1,0 +1,28 @@
+[build-system]
+requires = ["setuptools>=42"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "controlvlm3d"
+authors = [{ name = "wujing", email = "wujing14@xiaomi.com" }]
+version = "0.1.0"
+readme = "README.md"
+requires-python = ">=3.8"
+dependencies = [
+    # 'importlib-metadata; python_version>="3.8"',
+]
+
+#[tool.setuptools]
+#packages = ["xxx"]
+
+[tool.setuptools.packages.find]
+where = ["src"]          # ["."] by default
+include = ["spatiolm*", "slm_eval*"] # ["*"] by default
+# exclude = ["work_dirs*"]  # empty by default
+
+[tool.setuptools.package-data]
+spatiolm = ["configs/*", "scripts/*"]
+
+[project.scripts]
+spatiolm = "spatiolm.cli.main:cli_main"
+slm_eval = "slm_eval.__main__:cli_main"

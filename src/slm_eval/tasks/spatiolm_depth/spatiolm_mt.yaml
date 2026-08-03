@@ -1,0 +1,31 @@
+metadata:
+  - version: 0.1
+
+dataset_path: ./data/eval/spatiolm_depth
+dataset_kwargs:
+  load_from_disk: True
+test_split: relate_task
+
+# Multi task for depth related of SpatioLM
+task: spatiolm_depth_mt
+output_type: generate_until
+doc_to_visual: !function utils_mt.spatiolm_doc_to_visual
+doc_to_text: !function utils_mt.spatiolm_doc_to_text
+doc_to_target: !function utils_mt.spatiolm_doc_to_target
+# doc_to_target: 
+generation_kwargs:
+  max_new_tokens: 1024
+  temperature: 0
+  do_sample: false
+# The return value of process_results will be used by metrics
+process_results: !function utils_mt.spatiolm_process_results
+# Note that the metric name can be either a registed metric function (such as the case for GQA) or a key name returned by process_results
+lmms_eval_specific_kwargs:
+  default:
+    pre_prompt: ""
+    post_prompt: " (just in numeric)."
+
+metric_list:
+  - metric: delta1
+    aggregation: !function utils_mt.detal1_absrel_aggregate_results
+    higher_is_better: true

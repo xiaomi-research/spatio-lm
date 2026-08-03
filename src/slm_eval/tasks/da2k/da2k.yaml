@@ -1,0 +1,33 @@
+# dataset_path: ./data/eval/da-2k
+dataset_path: ./data/eval/DA-2K
+dataset_kwargs:
+  token: True
+  load_from_disk: True
+task: da2k
+test_split: test
+output_type: generate_until
+doc_to_visual: !function utils.da2k_doc_to_visual
+doc_to_text: !function utils.da2k_doc_to_text
+doc_to_target: !function utils.da2k_doc_to_target
+
+generation_kwargs:
+  max_new_tokens: 32768
+  do_sample: false
+  temperature: 0.0
+
+lmms_eval_specific_kwargs:
+  default:
+    prompt_format: mcq
+    pre_prompt: ""
+    post_prompt: ""
+    # post_prompt: "\nOptions:\nA. point1\nB. point2\nAnswer with the option's letter from the given choices directly."
+
+# The return value of process_results will be used by metrics
+process_results: !function utils.da2k_process_results
+
+metric_list:
+  - metric: accuracy
+    aggregation: !function utils.da2k_aggregate_results
+    higher_is_better: true
+metadata:
+  - version: 0.0

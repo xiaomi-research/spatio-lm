@@ -1,0 +1,32 @@
+# dataset_path: lidingm/ViewSpatial-Bench
+dataset_path: ./data/eval/ViewSpatial-Bench
+dataset_kwargs:
+  token: True
+  # load_from_disk: True
+task: viewspatialbench
+test_split: test
+output_type: generate_until
+doc_to_visual: !function utils.viewspatialbench_doc_to_visual
+doc_to_text: !function utils.viewspatialbench_doc_to_text
+doc_to_target: !function utils.viewspatialbench_doc_to_target
+
+generation_kwargs:
+  max_new_tokens: 256
+  do_sample: false
+  temperature: 0.0
+
+lmms_eval_specific_kwargs:
+  default:
+    prompt_format: mcq
+    pre_prompt: ""
+    post_prompt: "Answer with the option's letter from the given choices directly."
+
+# The return value of process_results will be used by metrics
+process_results: !function utils.viewspatialbench_process_results
+
+metric_list:
+  - metric: viewspatialbench_acc
+    aggregation: !function utils.viewspatialbench_aggregate_results
+    higher_is_better: true
+metadata:
+  - version: 0.0

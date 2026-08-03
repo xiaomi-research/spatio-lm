@@ -1,0 +1,381 @@
+# SpatioLM: Towards General Physical Spatial Intelligence in Vision-Language Models
+
+<p align="center">
+  <a href="https://openreview.net/forum?id=CHavqrN1X9"><img src="https://img.shields.io/badge/Paper-OpenReview-b31b1b?logo=openreview&amp;logoColor=white" alt="Paper: OpenReview"></a>
+  <img src="https://img.shields.io/badge/Paper-arXiv_Coming_Soon-9ca3af?logo=arxiv&amp;logoColor=white" alt="Paper: arXiv Coming Soon">
+  <a href="https://icml.cc/virtual/2026/poster/65576"><img src="https://img.shields.io/badge/ICML_2026-Oral-4c78a8" alt="ICML 2026 Oral"></a>
+  <img src="https://img.shields.io/badge/Model_Weights-Coming_Soon-9ca3af?logo=huggingface&amp;logoColor=white" alt="Model Weights: Coming Soon">
+  <img src="https://img.shields.io/badge/Project_Page-Coming_Soon-9ca3af" alt="Project Page: Coming Soon">
+</p>
+
+> Official implementation of **SpatioLM**, accepted as an **Oral presentation at the Forty-third International Conference on Machine Learning (ICML 2026)**.
+
+SpatioLM is a parameter-efficient framework for improving spatial intelligence in vision-language models (VLMs). It introduces a plug-and-play spatio-vision module and uses pseudo depth and camera supervision to learn physically coherent representations, without requiring 3D inputs at inference time. The same framework supports spatial perception, spatial reasoning, and embodied manipulation tasks.
+
+![teaser](docs/assets/teaser.png)
+
+## ✨ Highlights
+
+- **Non-invasive spatial enhancement:** preserves the general-purpose capabilities of the underlying VLM while improving spatial reasoning.
+- **3D-aware supervision:** distills token, depth, and camera-ray knowledge from a Depth Anything 3 teacher during training.
+- **Image and video support:** handles single images, multiple images, and sampled video frames.
+- **Strong spatial reasoning:** achieves 71.6 on VSI-Bench, the first reported result above 70 on this benchmark.
+- **Unified training stack:** extends [MS-SWIFT](https://github.com/modelscope/ms-swift) with a dedicated `spatiolm sft3d` entry point.
+- **Unified evaluation stack:** extends [LMMs-Eval](https://github.com/EvolvingLMMs-Lab/lmms-eval) with spatial benchmarks and OpenAI-compatible API evaluation.
+
+![SpatioLM](docs/assets/framework.png)
+
+## 📦 Release Status
+
+This repository contains the model implementation, the 3D distillation trainer, data loaders, and evaluation tasks. Model checkpoints and benchmark datasets are not stored in Git. Download or prepare them separately, then pass their local paths through the commands below.
+
+## 🛠️ Installation
+
+### Requirements
+
+- Linux
+- Python 3.10 recommended
+- NVIDIA GPU with CUDA support
+- CUDA toolkit when building FlashAttention
+
+The code has been tested with the following stack:
+
+| Package | Tested version |
+| --- | --- |
+| Python | 3.10 |
+| PyTorch | 2.6.0 + CUDA 12.4 |
+| torchvision | 0.21.0 |
+| Transformers | 4.57.3 |
+| MS-SWIFT | 3.12.1 |
+| LMMs-Eval | 0.4.0 |
+| Accelerate | 1.12.0 |
+| DeepSpeed | 0.18.4 |
+| FlashAttention | 2.7.4.post1 |
+
+### Create the environment
+
+Run the following commands from the repository root. Change the PyTorch wheel index if your CUDA runtime is not compatible with CUDA 12.4.
+
+```bash
+conda create -n spatiolm python=3.10 -y
+conda activate spatiolm
+
+pip install torch==2.6.0 torchvision==0.21.0 \
+  --index-url https://download.pytorch.org/whl/cu124
+
+pip install \
+  "transformers>=4.56.1,<5" \
+  "accelerate>=1.10,<2" \
+  "deepspeed>=0.14,<0.20" \
+  "ms-swift[all]>=3.8,<4" \
+  "lmms-eval>=0.4,<1" \
+  "qwen-vl-utils<0.0.12" \
+  decord h5py einops
+
+pip install "flash-attn<2.8" --no-build-isolation
+pip install -e .
+```
+
+FlashAttention is recommended for training but is not required for basic inference. If it cannot be built on your system, skip its installation and replace `--attn_impl flash_attention_2` with `--attn_impl sdpa` in the training commands.
+
+Verify the installation:
+
+```bash
+spatiolm sft3d --help
+slm_eval --help
+```
+
+## 🗂️ Model and Data Preparation
+
+A typical local layout is:
+
+```text
+data/
+├── ckpts/
+│   ├── spatiolm-init-or-checkpoint/
+│   └── DA3-Large/
+├── train/
+│   └── spatial_train.jsonl
+├── train-v3r/                  # Optional raw DepthLM data
+│   └── scannet/
+└── eval/
+    ├── DA-2K/
+    ├── site_bench/
+    └── spatiolm_depth/
+work_dirs/
+```
+
+`MODEL_PATH` must point to a SpatioLM-compatible InternVL checkpoint. For 3D distillation, its configuration must contain the SpatioLM vision condition and DPT-head configuration. `TEACHER3D_PATH` must point to a Hugging Face-compatible Depth Anything 3 teacher checkpoint loadable by `AutoModelForDepthEstimation`.
+
+### Supervised JSONL format
+
+Training data follows the MS-SWIFT multimodal JSONL format. Each line contains a conversation and either `images` or `videos`:
+
+```json
+{"messages":[{"role":"user","content":"<image>Which marked point is closer to the camera?"},{"role":"assistant","content":"A"}],"images":["/path/to/image.jpg"]}
+```
+
+```json
+{"messages":[{"role":"user","content":"<video>Describe the spatial relationship between the objects."},{"role":"assistant","content":"The chair is to the left of the table."}],"videos":["/path/to/video.mp4"]}
+```
+
+Media paths may be absolute or relative to the directory from which training is launched. The number of `<image>` or `<video>` placeholders must match the supplied media.
+
+### Optional DepthLM raw data
+
+The built-in DepthLM dataset generates spatial questions from RGB videos, metric depth, camera intrinsics, and camera poses. Each video must have a sidecar HDF5 file with the same stem:
+
+```text
+data/train-v3r/scannet/
+├── scene0000_00.mp4
+└── scene0000_00.h5
+```
+
+The HDF5 file must contain:
+
+| Key | Shape | Description |
+| --- | --- | --- |
+| `depth` | `(T, H, W)` | Metric depth maps; the dataset also reads its `invalid` attribute |
+| `intrinsic` | `(T, 3, 3)` | Camera intrinsic matrices |
+| `pos` | `(T, 4, 4)` | Camera-to-world poses |
+
+The registered dataset identifier remains `cvlm3d/depthlm` for backward compatibility. For example:
+
+```bash
+DEPTH_DATASET='torch::cvlm3d/depthlm::data_root="data/train-v3r",video_folders=["scannet"]'
+```
+
+Append `#N` to the identifier to sample or repeat it to `N` examples, for example `torch::cvlm3d/depthlm#1000::...`.
+
+## 🚀 Training
+
+### 3D-supervised training
+
+The main training entry point combines language-model loss with token, depth, and camera-ray distillation losses.
+
+```bash
+export MODEL_PATH=/path/to/spatiolm-init
+export TEACHER3D_PATH=/path/to/DA3-Large
+export TRAIN_JSONL=/path/to/spatial_train.jsonl
+export OUTPUT_DIR=work_dirs/spatiolm-sft3d
+
+export VIDEO_SEGMENTS=12
+export LOSS_LM_WEIGHT=0.6
+export LOSS_TOKEN_WEIGHT=0.2
+export LOSS_DEPTH_WEIGHT=0.1
+export LOSS_RAY_WEIGHT=0.1
+export DPT_LR_SCALE=10.0
+
+NPROC_PER_NODE=8 spatiolm sft3d \
+  --model "$MODEL_PATH" \
+  --teacher3d "$TEACHER3D_PATH" \
+  --use_hf true \
+  --train_type full \
+  --freeze_parameters_ratio 1 \
+  --trainable_parameters_regex "^(language_model.*(vision_3r.*|dpt_head)|condition_proj)" \
+  --torch_dtype bfloat16 \
+  --dataset "$TRAIN_JSONL" \
+  --num_train_epochs 1 \
+  --per_device_train_batch_size 2 \
+  --gradient_accumulation_steps 2 \
+  --learning_rate 2e-5 \
+  --warmup_ratio 0.05 \
+  --logging_steps 5 \
+  --save_strategy epoch \
+  --save_total_limit 2 \
+  --save_only_model true \
+  --remove_unused_columns false \
+  --ddp_find_unused_parameters false \
+  --split_dataset_ratio 0 \
+  --deepspeed zero2 \
+  --attn_impl flash_attention_2 \
+  --output_dir "$OUTPUT_DIR"
+```
+
+Set `NPROC_PER_NODE=1` for single-GPU training. For multi-node jobs, also set the standard `NNODES`, `NODE_RANK`, `MASTER_ADDR`, and `MASTER_PORT` variables understood by MS-SWIFT.
+
+To combine regular JSONL data with the generated DepthLM dataset, replace the `--dataset` line in the command above with:
+
+```bash
+--dataset "$TRAIN_JSONL" "$DEPTH_DATASET"
+```
+
+### Standard supervised fine-tuning
+
+Use MS-SWIFT directly when 3D teacher distillation is not required. The custom registration file enables the SpatioLM model and template definitions.
+
+```bash
+swift sft \
+  --custom_register_path src/spatiolm/swift/register.py \
+  --model "$MODEL_PATH" \
+  --use_hf true \
+  --train_type full \
+  --freeze_parameters_ratio 1 \
+  --trainable_parameters_regex "^(language_model.*vision_3r.*|condition_proj)" \
+  --torch_dtype bfloat16 \
+  --dataset "$TRAIN_JSONL" \
+  --num_train_epochs 1 \
+  --per_device_train_batch_size 2 \
+  --gradient_accumulation_steps 2 \
+  --learning_rate 2e-5 \
+  --warmup_ratio 0.05 \
+  --logging_steps 5 \
+  --save_strategy epoch \
+  --save_only_model true \
+  --split_dataset_ratio 0 \
+  --attn_impl flash_attention_2 \
+  --output_dir work_dirs/spatiolm-sft
+```
+
+The effective global batch size is `per_device_train_batch_size × gradient_accumulation_steps × number_of_GPUs × number_of_nodes`.
+
+## 🔍 Inference
+
+The following example runs image inference from a local SpatioLM checkpoint:
+
+```python
+import torch
+from lmms_eval.models.simple.internvl2 import load_image
+from PIL import Image
+from transformers import AutoTokenizer
+
+from spatiolm.models import InternVL3RChatModel
+
+checkpoint = "/path/to/spatiolm-checkpoint"
+image_path = "/path/to/image.jpg"
+
+model = InternVL3RChatModel.from_pretrained(
+    checkpoint,
+    dtype=torch.bfloat16,
+    low_cpu_mem_usage=True,
+).eval().cuda()
+tokenizer = AutoTokenizer.from_pretrained(
+    checkpoint,
+    trust_remote_code=True,
+    use_fast=False,
+)
+
+image = Image.open(image_path).convert("RGB")
+pixel_values = load_image(image, input_size=448).to(
+    device="cuda",
+    dtype=torch.bfloat16,
+)
+answer = model.chat(
+    tokenizer,
+    pixel_values,
+    "Which object is closer to the camera?",
+    {"max_new_tokens": 128, "do_sample": False},
+)
+print(answer)
+```
+
+For video inference and batched benchmark execution, use the `slm_eval` interface below. Set `VIDEO_SEGMENTS` to control the number of sampled frames.
+
+## 📊 Evaluation
+
+`slm_eval` preserves the LMMs-Eval CLI and automatically registers the additional SpatioLM models and tasks.
+
+### Local checkpoint
+
+```bash
+export CHECKPOINT=/path/to/spatiolm-checkpoint
+export VIDEO_SEGMENTS=48
+
+slm_eval \
+  --model spatiolm \
+  --model_args "pretrained=${CHECKPOINT},modality=video" \
+  --tasks site_bench_video \
+  --batch_size 1 \
+  --log_samples \
+  --output_path work_dirs/eval/site_bench_video
+```
+
+For multi-GPU evaluation:
+
+```bash
+accelerate launch --multi_gpu --num_processes 8 -m slm_eval \
+  --model spatiolm \
+  --model_args "pretrained=${CHECKPOINT},modality=video" \
+  --tasks site_bench_video \
+  --batch_size 1 \
+  --log_samples \
+  --output_path work_dirs/eval/site_bench_video
+```
+
+### OpenAI-compatible API
+
+Any endpoint implementing the OpenAI Chat Completions interface can be evaluated with the parallel API adapter:
+
+```bash
+export OPENAI_API_BASE=https://your-endpoint.example.com/v1
+export OPENAI_API_KEY=your-api-key
+
+slm_eval \
+  --model parallel_openai_compatible \
+  --model_args "model_version=your-model-name,max_workers=16,max_num_frames=16" \
+  --tasks cvbench \
+  --batch_size 1 \
+  --log_samples \
+  --output_path work_dirs/eval/api
+```
+
+For Azure OpenAI, set `azure_openai=true` in `--model_args` and export `AZURE_OPENAI_API_KEY`, `AZURE_OPENAI_API_BASE`, and `AZURE_OPENAI_API_VERSION`.
+
+### Included spatial tasks
+
+The repository adds the following task configurations on top of the standard LMMs-Eval catalog:
+
+| Data source | Tasks |
+| --- | --- |
+| Hugging Face datasets | `blink`, `cvbench`, `embspatialbench` |
+| Local benchmark data | `da2k`, `mindcube_tiny`, `my_mmsi_bench`, `scanqa`, `site_bench_image`, `site_bench_video`, `sqa3d`, `viewspatialbench`, `myvsibench` |
+| SpatioLM depth benchmark | `spatiolm_depth_sv`, `spatiolm_depth_mv`, `spatiolm_depth_mt` |
+
+List all registered tasks with:
+
+```bash
+slm_eval --tasks list
+```
+
+Tasks backed by local data read their paths from `src/slm_eval/tasks/*/*.yaml`. Place each processed Hugging Face dataset at the configured `dataset_path`, or update that field to your local path before evaluation.
+
+## 🧱 Repository Structure
+
+```text
+src/spatiolm/
+├── cli/          # MS-SWIFT-compatible training entry points
+├── datasets/     # RGB, depth, camera, and generated spatial QA datasets
+├── losses/       # Token, depth, and ray distillation losses
+├── models/       # SpatioLM, Depth Anything 3, InternVL, and VGGT components
+├── swift/        # Model/template registration and 3D trainer
+└── templates/    # InternVL and Qwen-VL multimodal templates
+src/slm_eval/
+├── simple/       # Local-checkpoint and OpenAI-compatible model adapters
+└── tasks/        # Spatial benchmark definitions and metrics
+```
+
+## 🔧 Troubleshooting
+
+- **CUDA out of memory:** reduce `VIDEO_SEGMENTS` or `per_device_train_batch_size`, then increase `gradient_accumulation_steps` to preserve the global batch size.
+- **FlashAttention build or import failure:** omit FlashAttention and use `--attn_impl sdpa`.
+- **Dataset not found:** check the task YAML under `src/slm_eval/tasks` and ensure `dataset_path` points to a dataset saved with Hugging Face `save_to_disk` when `load_from_disk: true` is set.
+- **Checkpoint configuration error:** verify that the checkpoint is a SpatioLM-compatible InternVL model and that its `config.json` contains the vision condition and DPT-head configuration required by the selected training mode.
+
+## 🙏 Acknowledgements
+
+This work is built upon and inspired by several outstanding open-source projects, including [MS-SWIFT](https://github.com/modelscope/ms-swift), [Depth Anything 3](https://github.com/ByteDance-Seed/Depth-Anything-3), [SenseNova-SI](https://github.com/OpenSenseNova/SenseNova-SI), [InternVL](https://github.com/OpenGVLab/InternVL), [VGGT](https://github.com/facebookresearch/vggt), and [LMMs-Eval](https://github.com/EvolvingLMMs-Lab/lmms-eval). We sincerely thank their authors and contributors for sharing their work with the community.
+
+## 📝 Citation
+
+If you find this work useful, please cite:
+
+```bibtex
+@inproceedings{
+wu2026spatiolm,
+title={Spatio{LM}: Towards General Physical Spatial Intelligence in Vision-Language Models},
+author={jing wu and Jianhua Wu and Jiayi Guan and Jiahong Chen and Jinghui Lu and Hangjun Ye and Bingzhao Gao and Long Chen},
+booktitle={Forty-third International Conference on Machine Learning},
+year={2026},
+url={https://openreview.net/forum?id=CHavqrN1X9}
+}
+```

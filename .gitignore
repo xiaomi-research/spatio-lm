@@ -1,0 +1,16 @@
+
+# pixi environments
+.pixi
+*.egg-info
+
+.claude
+.vscode
+**/__pycache__
+pixi.lock
+pixi.toml
+data
+notebooks
+work_dirs
+outputs
+wandb
+logs
