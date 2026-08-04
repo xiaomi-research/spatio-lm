@@ -2,7 +2,7 @@
 
 <p align="center">
   <a href="https://openreview.net/forum?id=CHavqrN1X9"><img src="https://img.shields.io/badge/Paper-OpenReview-b31b1b?logo=openreview&amp;logoColor=white" alt="Paper: OpenReview"></a>
-  <img src="https://img.shields.io/badge/Paper-arXiv_Coming_Soon-9ca3af?logo=arxiv&amp;logoColor=white" alt="Paper: arXiv Coming Soon">
+  <a href="https://arxiv.org/abs/2608.01899"><img src="https://img.shields.io/badge/Paper-arXiv-b31b1b?logo=arxiv&amp;logoColor=white" alt="Paper: arXiv"></a>
   <a href="https://icml.cc/virtual/2026/poster/65576"><img src="https://img.shields.io/badge/ICML_2026-Oral-4c78a8" alt="ICML 2026 Oral"></a>
   <img src="https://img.shields.io/badge/Model_Weights-Coming_Soon-9ca3af?logo=huggingface&amp;logoColor=white" alt="Model Weights: Coming Soon">
   <img src="https://img.shields.io/badge/Project_Page-Coming_Soon-9ca3af" alt="Project Page: Coming Soon">
@@ -370,12 +370,14 @@ This work is built upon and inspired by several outstanding open-source projects
 If you find this work useful, please cite:
 
 ```bibtex
-@inproceedings{
-wu2026spatiolm,
-title={Spatio{LM}: Towards General Physical Spatial Intelligence in Vision-Language Models},
-author={jing wu and Jianhua Wu and Jiayi Guan and Jiahong Chen and Jinghui Lu and Hangjun Ye and Bingzhao Gao and Long Chen},
-booktitle={Forty-third International Conference on Machine Learning},
-year={2026},
-url={https://openreview.net/forum?id=CHavqrN1X9}
+@inproceedings{wu2026spatiolm,
+  title={SpatioLM: Towards General Physical Spatial Intelligence in Vision-Language Models},
+  author={Wu, Jing and Wu, Jianhua and Guan, Jiayi and Chen, Jiahong and Lu, Jinghui and Ye, Hangjun and Gao, Bingzhao and Chen, Long},
+  booktitle={International Conference on Machine Learning (ICML)},
+  year={2026},
+  note={To appear},
+  eprint={2608.01899},
+  archivePrefix={arXiv},
+  url={https://arxiv.org/abs/2608.01899}
 }
 ```
