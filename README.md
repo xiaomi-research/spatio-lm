@@ -5,7 +5,7 @@
   <a href="https://arxiv.org/abs/2608.01899"><img src="https://img.shields.io/badge/Paper-arXiv-b31b1b?logo=arxiv&amp;logoColor=red" alt="Paper: arXiv"></a>
   <a href="https://icml.cc/virtual/2026/poster/65576"><img src="https://img.shields.io/badge/ICML_2026-Oral-4c78a8" alt="ICML 2026 Oral"></a>
   <a href="https://huggingface.co/collections/xiaomi-research/spatiolm"><img src="https://img.shields.io/badge/Model_Weights-Hugging_Face-ffd21e?logo=huggingface&amp;logoColor=yellow" alt="Model Weights: Hugging Face"></a>
-  <img src="https://img.shields.io/badge/Project_Page-Coming_Soon-9ca3af" alt="Project Page: Coming Soon">
+  <a href="https://xiaomi-research.github.io/spatio-lm/"><img src="https://img.shields.io/badge/Project_Page-Website-ff6900" alt="Project Page"></a>
 </p>
 
 > Official implementation of **SpatioLM**, accepted as an **Oral presentation at the Forty-third International Conference on Machine Learning (ICML 2026)**.

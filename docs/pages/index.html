@@ -1,0 +1,755 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ff6900">
+    <meta
+      name="description"
+      content="SpatioLM is a parameter-efficient framework for general physical spatial intelligence in vision-language models. ICML 2026 Oral."
+    >
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="SpatioLM | ICML 2026 Oral">
+    <meta
+      property="og:description"
+      content="Towards General Physical Spatial Intelligence in Vision-Language Models"
+    >
+    <meta property="og:image" content="https://xiaomi-research.github.io/spatio-lm/assets/teaser.png">
+    <meta property="og:url" content="https://xiaomi-research.github.io/spatio-lm/">
+    <link rel="canonical" href="https://xiaomi-research.github.io/spatio-lm/">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&amp;family=Inter:wght@400;500;600;700&amp;family=Source+Serif+4:opsz,wght@8..60,500;8..60,600&amp;display=swap"
+      rel="stylesheet"
+    >
+    <link rel="stylesheet" href="styles.css">
+    <script>document.documentElement.classList.add("js");</script>
+    <title>SpatioLM | ICML 2026 Oral</title>
+  </head>
+  <body>
+    <a class="skip-link" href="#main-content">Skip to content</a>
+
+    <header class="site-header" data-header>
+      <div class="nav-shell">
+        <a class="brand" href="#top" aria-label="SpatioLM home">
+          <span class="brand-mark" aria-hidden="true">
+            <i></i><i></i><i></i><i></i>
+          </span>
+          <span>SpatioLM</span>
+        </a>
+
+        <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="site-nav">
+          <span></span><span></span><span></span>
+          <span class="sr-only">Open navigation</span>
+        </button>
+
+        <nav class="site-nav" id="site-nav" aria-label="Primary navigation">
+          <a href="#overview">Overview</a>
+          <a href="#method">Method</a>
+          <a href="#results">Results</a>
+          <a href="#visuals">Visuals</a>
+          <a href="#appendix">Appendix</a>
+          <a href="#models">Models</a>
+          <a href="#citation">Citation</a>
+          <a class="nav-cta" href="https://github.com/xiaomi-research/spatio-lm">GitHub</a>
+        </nav>
+      </div>
+    </header>
+
+    <main id="main-content">
+      <section class="hero" id="top">
+        <div class="hero-inner">
+          <div class="venue-line reveal">
+            <span>ICML 2026 Oral</span>
+            <span>Seoul, South Korea</span>
+          </div>
+
+          <h1 class="reveal">
+            <span class="title-name">SpatioLM</span>
+            <span class="title-detail">Towards General Physical Spatial Intelligence in Vision-Language Models</span>
+          </h1>
+
+          <div class="authors reveal">
+            <span>Jing Wu<sup>*1</sup></span>
+            <span>Jianhua Wu<sup>*1,2</sup></span>
+            <span>Jiayi Guan<sup>1</sup></span>
+            <span>Jiahong Chen<sup>3</sup></span>
+            <span>Jinghui Lu<sup>1</sup></span>
+            <span>Hangjun Ye<sup>1</sup></span>
+            <span>Bingzhao Gao<sup>2</sup></span>
+            <span>Long Chen<sup>1</sup></span>
+          </div>
+
+          <div class="affiliations reveal">
+            <span><sup>1</sup> Xiaomi EV</span>
+            <span><sup>2</sup> Tongji University</span>
+            <span><sup>3</sup> Independent Researcher</span>
+            <span><sup>*</sup> Equal contribution</span>
+          </div>
+
+          <p class="hero-summary reveal">
+            A plug-and-play spatial enhancement for vision-language models that learns physically coherent
+            representations from pseudo depth and camera supervision, while requiring only RGB inputs at inference.
+          </p>
+
+          <div class="hero-actions reveal">
+            <a class="button button-primary" href="https://arxiv.org/abs/2608.01899">
+              <span class="button-label"><img class="resource-icon" src="assets/icons/file-text.svg" alt="">Paper</span>
+              <span aria-hidden="true">&rarr;</span>
+            </a>
+            <a class="button button-secondary" href="https://github.com/xiaomi-research/spatio-lm">
+              <span class="button-label"><img class="resource-icon" src="assets/icons/github.svg" alt="">Code</span>
+              <span aria-hidden="true">&rarr;</span>
+            </a>
+            <a class="button button-secondary" href="https://huggingface.co/collections/xiaomi-research/spatiolm">
+              <span class="button-label"><img class="resource-icon" src="assets/icons/boxes.svg" alt="">Models</span>
+              <span aria-hidden="true">&rarr;</span>
+            </a>
+            <a class="button button-secondary" href="https://icml.cc/virtual/2026/poster/65576">
+              <span class="button-label"><img class="resource-icon" src="assets/icons/presentation.svg" alt="">ICML</span>
+              <span aria-hidden="true">&rarr;</span>
+            </a>
+          </div>
+
+          <figure class="hero-figure reveal">
+            <img
+              src="assets/teaser.png"
+              alt="SpatioLM overview showing training data, spatial perception and understanding results, and manipulation transfer"
+              width="1493"
+              height="866"
+              fetchpriority="high"
+            >
+            <figcaption>
+              SpatioLM improves spatial perception and understanding, then transfers to discrete and continuous embodied manipulation.
+            </figcaption>
+          </figure>
+        </div>
+      </section>
+
+      <section class="metric-band" aria-label="Key results">
+        <div class="section-inner metric-grid">
+          <div class="metric reveal"><strong>20K</strong><span>training videos</span></div>
+          <div class="metric reveal"><strong>643K</strong><span>spatial QA pairs</span></div>
+          <div class="metric reveal"><strong>15</strong><span>training datasets</span></div>
+          <div class="metric metric-accent reveal"><strong>71.6</strong><span>VSI-Bench score</span></div>
+        </div>
+      </section>
+
+      <section class="section" id="overview">
+        <div class="section-inner">
+          <div class="section-heading reveal">
+            <p class="eyebrow">01 / Overview</p>
+            <h2>Spatial intelligence, without an external 3D stack.</h2>
+          </div>
+
+          <div class="abstract-layout">
+            <p class="lead reveal">
+              Vision-language models are strong semantic reasoners, but their spatial representations remain weak.
+              Existing approaches often add explicit 3D priors or third-party spatial encoders, increasing complexity
+              and weakening general-purpose capabilities after fine-tuning.
+            </p>
+            <div class="abstract-copy reveal">
+              <p>
+                SpatioLM introduces a parameter-efficient, non-invasive Spatio-Vision Module that elicits spatial
+                knowledge already present in a pretrained VLM. During training, pseudo depth and camera information
+                guide the model toward physically coherent representations. At inference, the model operates directly
+                on images or video, without extra 3D inputs.
+              </p>
+              <p>
+                Across spatial perception, spatial understanding, and embodied manipulation, the framework delivers
+                broad gains while limiting degradation of the base model's general capabilities. On VSI-Bench,
+                SpatioLM reaches 71.6, the first reported score above 70.
+              </p>
+            </div>
+          </div>
+
+          <div class="capability-grid">
+            <article class="capability reveal">
+              <span class="capability-index">A</span>
+              <h3>Perception</h3>
+              <p>Reason about metric depth, distance, speed, and physically grounded visual measurements.</p>
+              <span class="capability-meta">RGB-only inference</span>
+            </article>
+            <article class="capability reveal">
+              <span class="capability-index">B</span>
+              <h3>Understanding</h3>
+              <p>Resolve object relations, room geometry, temporal order, and multi-view spatial structure.</p>
+              <span class="capability-meta">Image + video</span>
+            </article>
+            <article class="capability reveal">
+              <span class="capability-index">C</span>
+              <h3>Action</h3>
+              <p>Transfer learned spatial representations to discrete and continuous manipulation policies.</p>
+              <span class="capability-meta">Embodied downstream tasks</span>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section class="section section-tint" id="method">
+        <div class="section-inner">
+          <div class="section-heading section-heading-split reveal">
+            <div>
+              <p class="eyebrow">02 / Method</p>
+              <h2>Frozen backbone. Plug-and-play spatial reasoning.</h2>
+            </div>
+            <p>
+              The Spatio-Vision Module is inserted alongside selected vision-language blocks and trained with
+              geometric supervision, preserving the pretrained VLM path.
+            </p>
+          </div>
+
+          <figure class="method-figure reveal">
+            <img
+              src="assets/framework.png"
+              alt="SpatioLM architecture with a Spatio-Vision block, zero projection layers, depth and ray-map supervision, and a frozen VLM"
+              width="1495"
+              height="640"
+              loading="lazy"
+            >
+          </figure>
+
+          <ol class="method-steps">
+            <li class="reveal">
+              <span>01</span>
+              <div><h3>Elicit</h3><p>Reuse pretrained visual tokens instead of attaching a separate spatial encoder.</p></div>
+            </li>
+            <li class="reveal">
+              <span>02</span>
+              <div><h3>Supervise</h3><p>Distill token, depth, and camera-ray knowledge from a geometry teacher during training.</p></div>
+            </li>
+            <li class="reveal">
+              <span>03</span>
+              <div><h3>Preserve</h3><p>Keep the underlying VLM frozen and activate spatial reasoning only when needed.</p></div>
+            </li>
+          </ol>
+        </div>
+      </section>
+
+      <section class="section" id="results">
+        <div class="section-inner">
+          <div class="section-heading section-heading-split reveal">
+            <div>
+              <p class="eyebrow">03 / Experiments</p>
+              <h2>Consistent gains across perception, reasoning, and action.</h2>
+            </div>
+            <p>
+              SpatioLM is evaluated against proprietary, open-source, and spatial-specialized models across
+              four perception benchmarks, three spatial understanding benchmarks, general VLM tasks, and LIBERO.
+            </p>
+          </div>
+
+          <div class="result-summary-grid">
+            <div class="result-summary reveal"><span>Metric depth</span><strong>+30.9</strong><p>MD-S over SenseNovaSI-8B</p></div>
+            <div class="result-summary reveal"><span>Spatial reasoning</span><strong>71.6</strong><p>First VSI-Bench result above 70</p></div>
+            <div class="result-summary reveal"><span>3D question answering</span><strong>101.8</strong><p>ScanQA CIDEr</p></div>
+            <div class="result-summary reveal"><span>Embodied manipulation</span><strong>96.3</strong><p>LIBERO average success</p></div>
+          </div>
+
+          <div class="results-explorer reveal" data-tabs>
+            <div class="tab-list" role="tablist" aria-label="Experiment results">
+              <button type="button" role="tab" aria-selected="true" aria-controls="panel-perception" id="tab-perception" data-tab="panel-perception">Perception</button>
+              <button type="button" role="tab" aria-selected="false" aria-controls="panel-understanding" id="tab-understanding" data-tab="panel-understanding">Understanding</button>
+              <button type="button" role="tab" aria-selected="false" aria-controls="panel-general" id="tab-general" data-tab="panel-general">General ability</button>
+              <button type="button" role="tab" aria-selected="false" aria-controls="panel-manipulation" id="tab-manipulation" data-tab="panel-manipulation">Manipulation</button>
+            </div>
+
+            <div class="results-panel is-active" id="panel-perception" role="tabpanel" aria-labelledby="tab-perception" data-panel>
+              <div class="paper-result-layout">
+                <figure class="result-figure result-figure-paper">
+                  <a href="assets/results/spatial-perception.webp" target="_blank" rel="noreferrer">
+                    <img src="assets/results/spatial-perception.webp" alt="Qualitative tasks for metric depth, relative depth, and depth-related reasoning" width="1020" height="1470" loading="lazy">
+                  </a>
+                  <figcaption>Qualitative depth tasks on MD-S, MD-M, DA-2K, and DR.</figcaption>
+                </figure>
+                <div class="paper-result-table">
+                  <div class="table-heading">
+                    <div><p class="table-kicker">Spatial perception</p><h3>Overall depth benchmark results</h3></div>
+                    <p>MD-S and MD-M use &delta; &lt; 1.25. DA-2K and DR report accuracy. Higher is better.</p>
+                  </div>
+                  <div class="paper-table-wrap">
+                    <table class="paper-table paper-table-dense">
+                  <thead><tr><th>Method</th><th>MD-S</th><th>MD-M</th><th>DA-2K</th><th>DR</th></tr></thead>
+                  <tbody>
+                    <tr class="group-row"><th colspan="5">Proprietary models</th></tr>
+                    <tr><td>GPT-5.2</td><td>15.5</td><td>21.4</td><td>56.0</td><td>11.2</td></tr>
+                    <tr><td>Gemini-2.5 Flash</td><td>28.6</td><td>28.7</td><td>75.5</td><td>9.87</td></tr>
+                    <tr><td>Qwen3-VL Plus</td><td>37.6</td><td>37.9</td><td>79.4</td><td>17.5</td></tr>
+                    <tr><td>Doubao-1.5 Thinking</td><td>52.6</td><td><u>41.1</u></td><td>80.7</td><td>13.6</td></tr>
+                    <tr class="group-row"><th colspan="5">Open-source models</th></tr>
+                    <tr><td>LLaVA-NeXT-Video-7B</td><td>9.24</td><td>10.0</td><td>51.2</td><td>6.46</td></tr>
+                    <tr><td>Qwen2.5-VL-72B</td><td>32.9</td><td>31.5</td><td>64.0</td><td>12.4</td></tr>
+                    <tr><td>InternVL3.5-8B</td><td>41.0</td><td>28.3</td><td>60.3</td><td>10.2</td></tr>
+                    <tr><td>Qwen3-VL-235B-A22B</td><td>48.4</td><td>39.9</td><td>73.4</td><td>17.2</td></tr>
+                    <tr class="group-row"><th colspan="5">Specialized spatial models</th></tr>
+                    <tr><td>Cosmos-R1-7B</td><td>19.4</td><td>25.4</td><td>53.1</td><td>7.01</td></tr>
+                    <tr><td>VST-7B-SFT</td><td>51.0</td><td>26.3</td><td><strong>83.8</strong></td><td>10.9</td></tr>
+                    <tr><td>Cambrian-S-7B</td><td>3.09</td><td>3.21</td><td>53.7</td><td>1.74</td></tr>
+                    <tr><td>SenseNovaSI-8B</td><td>52.6</td><td>37.7</td><td>71.8</td><td>17.5</td></tr>
+                    <tr><td>DepthLM (Pixtral-12B)</td><td>18.0</td><td>40.0</td><td>-</td><td>11.9</td></tr>
+                    <tr class="group-row"><th colspan="5">SpatioLM</th></tr>
+                    <tr class="ours-row"><td>SpatioLM<sub>InternVL3.5-8B</sub></td><td><u>50.9</u></td><td>32.0</td><td><u>81.7</u></td><td><u>24.1</u></td></tr>
+                    <tr class="ours-row"><td>SpatioLM<sub>SenseNovaSI-8B</sub></td><td><strong>83.5</strong></td><td><strong>69.0</strong></td><td><strong>83.8</strong></td><td><strong>41.8</strong></td></tr>
+                  </tbody>
+                    </table>
+                  </div>
+                  <p class="table-note">Best and runner-up results are bolded and underlined. API and open-source baselines marked with * in the paper were re-evaluated under official settings.</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="results-panel" id="panel-understanding" role="tabpanel" aria-labelledby="tab-understanding" data-panel>
+              <div class="paper-result-layout">
+                <figure class="result-figure result-figure-paper">
+                  <a href="assets/results/vsibench.webp" target="_blank" rel="noreferrer">
+                    <img src="assets/results/vsibench.webp" alt="Qualitative VSI-Bench tasks for measurement, direction, and route planning" width="973" height="1160" loading="lazy">
+                  </a>
+                  <figcaption>Qualitative measurement, configuration, and route-planning tasks on VSI-Bench.</figcaption>
+                </figure>
+                <div class="paper-result-table">
+                  <div class="table-heading">
+                    <div><p class="table-kicker">Spatial understanding</p><h3>VSI-Bench</h3></div>
+                    <p>Eight categories spanning configuration, metric estimation, navigation, and spatiotemporal reasoning.</p>
+                  </div>
+                  <div class="paper-table-wrap">
+                    <table class="paper-table paper-table-wide paper-table-dense">
+                  <thead><tr><th>Method</th><th>Avg.</th><th>Obj. count</th><th>Abs. dist.</th><th>Obj. size</th><th>Room size</th><th>Rel. dist.</th><th>Rel. dir.</th><th>Route plan</th><th>Appr. order</th></tr></thead>
+                  <tbody>
+                    <tr class="group-row"><th colspan="10">Proprietary and open-source models</th></tr>
+                    <tr><td>GPT-4o</td><td>34.0</td><td>46.2</td><td>5.3</td><td>43.8</td><td>38.2</td><td>37.0</td><td>41.3</td><td>31.5</td><td>28.5</td></tr>
+                    <tr><td>Gemini-2.5 Pro</td><td>51.5</td><td>43.8</td><td>34.9</td><td>64.3</td><td>42.8</td><td>61.1</td><td>47.8</td><td>45.9</td><td>71.3</td></tr>
+                    <tr><td>LLaVA-OneVision-72B</td><td>40.2</td><td>43.5</td><td>23.9</td><td>57.6</td><td>37.5</td><td>42.5</td><td>39.9</td><td>32.5</td><td>44.6</td></tr>
+                    <tr><td>LLaVA-NeXT-Video-72B</td><td>40.9</td><td>48.9</td><td>22.8</td><td>57.4</td><td>35.3</td><td>42.4</td><td>36.7</td><td>35.0</td><td>48.6</td></tr>
+                    <tr><td>InternVL3.5-8B</td><td>56.1</td><td>70.7</td><td>43.3</td><td>68.1</td><td>63.6</td><td>55.6</td><td>49.1</td><td>36.6</td><td>61.5</td></tr>
+                    <tr><td>Qwen2.5-VL-7B</td><td>32.7</td><td>34.5</td><td>19.4</td><td>47.6</td><td>40.8</td><td>32.8</td><td>24.5</td><td>32.5</td><td>29.4</td></tr>
+                    <tr><td>Qwen3-VL-235B-A22B</td><td>51.0</td><td>60.6</td><td>41.6</td><td>73.5</td><td>63.8</td><td>47.7</td><td>43.7</td><td>35.1</td><td>42.1</td></tr>
+                    <tr class="group-row"><th colspan="10">Specialized spatial models</th></tr>
+                    <tr><td>Spatial-MLLM-4B</td><td>48.4</td><td>65.3</td><td>34.8</td><td>63.1</td><td>45.1</td><td>41.3</td><td>46.2</td><td>33.5</td><td>46.3</td></tr>
+                    <tr><td>VLM-3R-7B</td><td>60.9</td><td>70.2</td><td>49.4</td><td>69.2</td><td>67.1</td><td>65.4</td><td>80.5</td><td>45.4</td><td>40.1</td></tr>
+                    <tr><td>GS-Reasoner (w/d)</td><td>64.7</td><td>69.1</td><td><strong>61.9</strong></td><td>70.0</td><td>65.7</td><td>65.4</td><td><strong>88.9</strong></td><td>44.3</td><td>52.3</td></tr>
+                    <tr><td>Cambrian-S-7B</td><td>67.5</td><td>73.2</td><td>50.5</td><td><u>74.9</u></td><td><strong>72.2</strong></td><td>71.1</td><td><strong>76.2</strong></td><td>41.8</td><td>80.1</td></tr>
+                    <tr><td>VST-SFT-7B</td><td>60.6</td><td>72.0</td><td>44.4</td><td>74.3</td><td>68.3</td><td>59.7</td><td>55.8</td><td>44.9</td><td>65.2</td></tr>
+                    <tr><td>SenseNovaSI-8B</td><td><u>68.7</u></td><td>75.7</td><td>53.2</td><td>72.8</td><td>67.5</td><td><u>77.0</u></td><td>72.7</td><td><strong>48.5</strong></td><td><u>82.6</u></td></tr>
+                    <tr class="group-row"><th colspan="10">SpatioLM</th></tr>
+                    <tr class="ours-row"><td>SpatioLM<sub>InternVL3.5-8B</sub></td><td>65.0</td><td><u>76.1</u></td><td>50.9</td><td>73.6</td><td>65.1</td><td>73.3</td><td>70.1</td><td>44.3</td><td>66.9</td></tr>
+                    <tr class="ours-row"><td>SpatioLM<sub>SenseNovaSI-8B</sub></td><td><strong>71.6</strong></td><td><strong>81.9</strong></td><td><u>55.7</u></td><td><strong>75.2</strong></td><td><u>71.5</u></td><td><strong>78.2</strong></td><td><u>74.4</u></td><td><u>47.9</u></td><td><strong>87.8</strong></td></tr>
+                  </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+
+              <div class="table-heading table-heading-secondary">
+                <div><p class="table-kicker">3D question answering</p><h3>ScanQA and SQA3D</h3></div>
+                <p>ScanQA reports language metrics; SQA3D reports exact-match accuracy.</p>
+              </div>
+              <div class="paper-table-wrap">
+                <table class="paper-table">
+                  <thead><tr><th>Method</th><th>B1</th><th>B4</th><th>METEOR</th><th>ROUGE-L</th><th>CIDEr</th><th>E1</th><th>ER1</th></tr></thead>
+                  <tbody>
+                    <tr><td>ScanQA</td><td>30.2</td><td>10.1</td><td>13.1</td><td>33.3</td><td>64.9</td><td>47.2</td><td>-</td></tr>
+                    <tr><td>SQA3D</td><td>30.5</td><td>11.2</td><td>13.5</td><td>34.5</td><td>-</td><td>46.6</td><td>-</td></tr>
+                    <tr><td>Qwen2.5-VL-72B</td><td>26.8</td><td>12.0</td><td>13.0</td><td>35.2</td><td>66.9</td><td>47.0</td><td>50.9</td></tr>
+                    <tr><td>InternVL3.5-8B</td><td>35.1</td><td>8.12</td><td>14.6</td><td>39.4</td><td>74.2</td><td>51.0</td><td>54.0</td></tr>
+                    <tr><td>Qwen3-VL-8B</td><td>14.1</td><td>8.34</td><td>11.6</td><td>35.8</td><td>63.0</td><td>47.2</td><td>51.4</td></tr>
+                    <tr><td>SenseNovaSI-8B</td><td>26.4</td><td>0.00</td><td>13.4</td><td>37.6</td><td>70.0</td><td>47.8</td><td>50.1</td></tr>
+                    <tr><td>VST-7B-SFT</td><td>8.43</td><td>0.50</td><td>9.63</td><td>41.9</td><td>82.1</td><td>45.7</td><td>48.7</td></tr>
+                    <tr><td>Spatial-MLLM-4B</td><td>44.4</td><td>14.8</td><td>18.4</td><td>45.0</td><td>91.8</td><td><u>55.9</u></td><td><strong>58.7</strong></td></tr>
+                    <tr class="ours-row"><td>SpatioLM<sub>InternVL3.5-8B</sub></td><td><u>45.4</u></td><td><u>16.2</u></td><td><u>19.0</u></td><td><u>47.5</u></td><td><u>98.2</u></td><td>55.3</td><td>57.7</td></tr>
+                    <tr class="ours-row"><td>SpatioLM<sub>SenseNovaSI-8B</sub></td><td><strong>48.4</strong></td><td><strong>16.3</strong></td><td><strong>19.8</strong></td><td><strong>48.9</strong></td><td><strong>101.8</strong></td><td><strong>56.5</strong></td><td><u>58.6</u></td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <div class="results-panel" id="panel-general" role="tabpanel" aria-labelledby="tab-general" data-panel>
+              <div class="paper-result-layout paper-result-layout-general">
+                <figure class="result-figure result-figure-paper">
+                  <a href="assets/results/general-capabilities.webp" target="_blank" rel="noreferrer">
+                    <img src="assets/results/general-capabilities.webp" alt="Relative performance change on general capability benchmarks for SpatioLM and Spatial-MLLM" width="575" height="316" loading="lazy">
+                  </a>
+                  <figcaption>Relative performance change after spatial fine-tuning.</figcaption>
+                </figure>
+                <div>
+                  <div class="table-heading"><div><p class="table-kicker">General-purpose capability</p><h3>Limited catastrophic forgetting</h3></div></div>
+                  <p class="result-copy">Across VideoMME, MVBench, MMMU, and VideoMMMU, both SpatioLM variants retain average performance within 4% of their frozen base models. Spatial-MLLM drops by 44% under the same aggregate view.</p>
+                  <div class="paper-table-wrap">
+                    <table class="paper-table paper-table-compact">
+                      <thead><tr><th>Method</th><th>Avg.</th><th>VideoMME</th><th>MVBench</th><th>MMMU</th><th>VMMMU-P</th><th>VMMMU-C</th><th>VMMMU-A</th></tr></thead>
+                      <tbody>
+                        <tr><td>Base InternVL3.5-8B</td><td>52.8</td><td>65.2</td><td>73.2</td><td>56.3</td><td>35.7</td><td>50.7</td><td>35.7</td></tr>
+                        <tr class="ours-row"><td>SpatioLM<sub>InternVL3.5-8B</sub></td><td>50.5 <small>-4%</small></td><td>57.7</td><td>60.5</td><td>51.8</td><td>35.0</td><td>42.0</td><td><strong>55.7</strong></td></tr>
+                        <tr><td>Base SenseNovaSI-8B</td><td>49.8</td><td>62.5</td><td>65.6</td><td>50.6</td><td>53.0</td><td>36.3</td><td>30.7</td></tr>
+                        <tr class="ours-row"><td>SpatioLM<sub>SenseNovaSI-8B</sub></td><td>48.1 <small>-3%</small></td><td>60.7</td><td>60.7</td><td>50.1</td><td>51.7</td><td>33.7</td><td>31.7</td></tr>
+                        <tr><td>Base Qwen2.5-VL-3B</td><td>49.8</td><td>58.5</td><td>67.0</td><td>47.2</td><td>56.3</td><td>39.7</td><td>30.3</td></tr>
+                        <tr><td>Spatial-MLLM<sub>Qwen2.5-VL-3B</sub></td><td>27.9 <small>-44%</small></td><td>43.6</td><td>51.9</td><td>35.7</td><td>10.0</td><td>7.33</td><td>18.7</td></tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="results-panel" id="panel-manipulation" role="tabpanel" aria-labelledby="tab-manipulation" data-panel>
+              <div class="paper-result-layout">
+                <figure class="result-figure result-figure-paper">
+                  <a href="assets/results/libero.webp" target="_blank" rel="noreferrer">
+                    <img src="assets/results/libero.webp" alt="Qualitative LIBERO manipulation trajectories for SpatioLM" width="1228" height="1615" loading="lazy">
+                  </a>
+                  <figcaption>Qualitative results on LIBERO. Each score averages 500 trials per suite.</figcaption>
+                </figure>
+                <div>
+                  <div class="table-heading"><div><p class="table-kicker">Embodied manipulation</p><h3>LIBERO across four suites</h3></div></div>
+                  <div class="paper-table-wrap">
+                    <table class="paper-table paper-table-compact">
+                      <thead><tr><th>Method</th><th>Pretrain</th><th>Action</th><th>Spatial</th><th>Object</th><th>Goal</th><th>Long</th><th>Avg.</th></tr></thead>
+                      <tbody>
+                        <tr><td>OpenVLA</td><td>Yes</td><td>D</td><td>84.7</td><td>88.4</td><td>79.2</td><td>53.7</td><td>76.5</td></tr>
+                        <tr><td>SpatialVLA</td><td>Yes</td><td>D</td><td>88.2</td><td>88.9</td><td>78.6</td><td>55.5</td><td>78.1</td></tr>
+                        <tr><td>&pi;<sub>0</sub>-FAST</td><td>Yes</td><td>D</td><td>96.4</td><td>96.8</td><td>88.6</td><td>60.2</td><td>85.5</td></tr>
+                        <tr><td>FlowVLA</td><td>No</td><td>D</td><td>93.2</td><td>95.0</td><td>91.6</td><td>72.6</td><td>88.1</td></tr>
+                        <tr><td>UniVLA</td><td>Yes</td><td>D</td><td>96.5</td><td>96.8</td><td>95.6</td><td>92.0</td><td>95.2</td></tr>
+                        <tr><td>SmolVLA</td><td>No</td><td>C</td><td>93.0</td><td>94.0</td><td>91.0</td><td>77.0</td><td>88.8</td></tr>
+                        <tr><td>OpenVLA-OFT</td><td>No</td><td>C</td><td>94.3</td><td>95.2</td><td>91.7</td><td>86.5</td><td>91.9</td></tr>
+                        <tr><td>GR00T-N1</td><td>Yes</td><td>C</td><td>94.4</td><td>97.6</td><td>93.0</td><td>90.6</td><td>93.9</td></tr>
+                        <tr><td>&pi;<sub>0</sub></td><td>Yes</td><td>C</td><td><strong>96.8</strong></td><td>98.8</td><td>95.8</td><td>85.2</td><td>94.2</td></tr>
+                        <tr><td>DepthVLA</td><td>No</td><td>C</td><td>96.4</td><td>98.0</td><td>95.8</td><td>89.2</td><td>94.9</td></tr>
+                        <tr class="baseline-row"><td>SenseNovaSI-VLA0</td><td>No</td><td>D</td><td>93.8</td><td>84.0</td><td>79.4</td><td>59.4</td><td>79.2</td></tr>
+                        <tr class="baseline-row"><td>SenseNovaSI-OFT</td><td>No</td><td>C</td><td>92.2</td><td>98.6</td><td>96.4</td><td>93.8</td><td>95.3</td></tr>
+                        <tr class="ours-row"><td>SpatioLM-VLA0</td><td>No</td><td>D</td><td>95.6</td><td>97.2</td><td>92.8</td><td>78.6</td><td>91.0</td></tr>
+                        <tr class="ours-row"><td>SpatioLM-OFT</td><td>No</td><td>C</td><td>93.4</td><td><strong>99.0</strong></td><td><strong>97.8</strong></td><td><strong>94.8</strong></td><td><strong>96.3</strong></td></tr>
+                      </tbody>
+                    </table>
+                  </div>
+                  <p class="table-note">D: discrete actions. C: continuous actions. SpatioLM uses a 2B backbone without large-scale robot manipulation pretraining.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section section-tint" id="visuals">
+        <div class="section-inner">
+          <div class="section-heading section-heading-split reveal">
+            <div>
+              <p class="eyebrow">04 / Qualitative Results</p>
+              <h2>From metric geometry to situated reasoning.</h2>
+            </div>
+            <p>Examples expose both final language answers and intermediate depth or camera-ray representations across images and videos.</p>
+          </div>
+
+          <div class="qualitative-paper-stack">
+            <article class="paper-result-layout qualitative-paper-row reveal">
+              <figure class="result-figure result-figure-paper">
+                <a href="assets/results/spatial-perception.webp" target="_blank" rel="noreferrer">
+                  <img src="assets/results/spatial-perception.webp" alt="Qualitative results for single-image depth, multi-image depth, relative depth, and depth-related reasoning" width="1020" height="1470" loading="lazy">
+                </a>
+                <figcaption><strong>Spatial perception.</strong> Metric depth, relative depth, and depth-related physical reasoning.</figcaption>
+              </figure>
+              <div class="paper-result-table">
+                <div class="table-heading">
+                  <div><p class="table-kicker">Spatial perception</p><h3>Overall depth benchmarks</h3></div>
+                  <a class="table-link" href="#results">Full comparison &uarr;</a>
+                </div>
+                <div class="paper-table-wrap">
+                  <table class="paper-table paper-table-dense">
+                    <thead><tr><th>Method</th><th>MD-S</th><th>MD-M</th><th>DA-2K</th><th>DR</th></tr></thead>
+                    <tbody>
+                      <tr class="group-row"><th colspan="5">Representative baselines</th></tr>
+                      <tr><td>GPT-5.2</td><td>15.5</td><td>21.4</td><td>56.0</td><td>11.2</td></tr>
+                      <tr><td>Gemini-2.5 Flash</td><td>28.6</td><td>28.7</td><td>75.5</td><td>9.87</td></tr>
+                      <tr><td>Qwen3-VL Plus</td><td>37.6</td><td>37.9</td><td>79.4</td><td>17.5</td></tr>
+                      <tr><td>InternVL3.5-8B</td><td>41.0</td><td>28.3</td><td>60.3</td><td>10.2</td></tr>
+                      <tr><td>VST-7B-SFT</td><td>51.0</td><td>26.3</td><td><strong>83.8</strong></td><td>10.9</td></tr>
+                      <tr><td>SenseNovaSI-8B</td><td>52.6</td><td>37.7</td><td>71.8</td><td>17.5</td></tr>
+                      <tr class="group-row"><th colspan="5">SpatioLM</th></tr>
+                      <tr class="ours-row"><td>SpatioLM<sub>InternVL3.5-8B</sub></td><td><u>50.9</u></td><td>32.0</td><td><u>81.7</u></td><td><u>24.1</u></td></tr>
+                      <tr class="ours-row"><td>SpatioLM<sub>SenseNovaSI-8B</sub></td><td><strong>83.5</strong></td><td><strong>69.0</strong></td><td><strong>83.8</strong></td><td><strong>41.8</strong></td></tr>
+                    </tbody>
+                  </table>
+                </div>
+                <div class="result-callouts">
+                  <div><strong>+30.9</strong><span>MD-S over base</span></div>
+                  <div><strong>+31.3</strong><span>MD-M over base</span></div>
+                  <div><strong>+24.3</strong><span>DR over base</span></div>
+                </div>
+                <p class="table-note">MD-S and MD-M use &delta; &lt; 1.25; DA-2K and DR report accuracy. Higher is better.</p>
+              </div>
+            </article>
+
+            <article class="paper-result-layout qualitative-paper-row reveal">
+              <figure class="result-figure result-figure-paper">
+                <a href="assets/results/vsibench.webp" target="_blank" rel="noreferrer">
+                  <img src="assets/results/vsibench.webp" alt="Qualitative VSI-Bench results for object size, absolute distance, relative direction, and route planning" width="973" height="1160" loading="lazy">
+                </a>
+                <figcaption><strong>Spatial understanding.</strong> Measurement, configuration, and route-planning tasks on VSI-Bench.</figcaption>
+              </figure>
+              <div class="paper-result-table">
+                <div class="table-heading">
+                  <div><p class="table-kicker">Spatial understanding</p><h3>VSI-Bench</h3></div>
+                  <a class="table-link" href="#results">Full comparison &uarr;</a>
+                </div>
+                <div class="paper-table-wrap">
+                  <table class="paper-table paper-table-wide paper-table-dense">
+                    <thead><tr><th>Method</th><th>Avg.</th><th>Obj. count</th><th>Abs. dist.</th><th>Obj. size</th><th>Room size</th><th>Rel. dist.</th><th>Rel. dir.</th><th>Route</th><th>Order</th></tr></thead>
+                    <tbody>
+                      <tr class="group-row"><th colspan="10">Representative baselines</th></tr>
+                      <tr><td>GPT-4o</td><td>34.0</td><td>46.2</td><td>5.3</td><td>43.8</td><td>38.2</td><td>37.0</td><td>41.3</td><td>31.5</td><td>28.5</td></tr>
+                      <tr><td>Gemini-2.5 Pro</td><td>51.5</td><td>43.8</td><td>34.9</td><td>64.3</td><td>42.8</td><td>61.1</td><td>47.8</td><td>45.9</td><td>71.3</td></tr>
+                      <tr><td>InternVL3.5-8B</td><td>56.1</td><td>70.7</td><td>43.3</td><td>68.1</td><td>63.6</td><td>55.6</td><td>49.1</td><td>36.6</td><td>61.5</td></tr>
+                      <tr><td>GS-Reasoner</td><td>64.7</td><td>69.1</td><td><strong>61.9</strong></td><td>70.0</td><td>65.7</td><td>65.4</td><td><strong>88.9</strong></td><td>44.3</td><td>52.3</td></tr>
+                      <tr><td>Cambrian-S-7B</td><td>67.5</td><td>73.2</td><td>50.5</td><td>74.9</td><td><strong>72.2</strong></td><td>71.1</td><td>76.2</td><td>41.8</td><td>80.1</td></tr>
+                      <tr><td>SenseNovaSI-8B</td><td><u>68.7</u></td><td>75.7</td><td>53.2</td><td>72.8</td><td>67.5</td><td><u>77.0</u></td><td>72.7</td><td><strong>48.5</strong></td><td><u>82.6</u></td></tr>
+                      <tr class="group-row"><th colspan="10">SpatioLM</th></tr>
+                      <tr class="ours-row"><td>SpatioLM<sub>InternVL3.5-8B</sub></td><td>65.0</td><td><u>76.1</u></td><td>50.9</td><td>73.6</td><td>65.1</td><td>73.3</td><td>70.1</td><td>44.3</td><td>66.9</td></tr>
+                      <tr class="ours-row"><td>SpatioLM<sub>SenseNovaSI-8B</sub></td><td><strong>71.6</strong></td><td><strong>81.9</strong></td><td><u>55.7</u></td><td><strong>75.2</strong></td><td><u>71.5</u></td><td><strong>78.2</strong></td><td><u>74.4</u></td><td><u>47.9</u></td><td><strong>87.8</strong></td></tr>
+                    </tbody>
+                  </table>
+                </div>
+                <div class="result-callouts">
+                  <div><strong>71.6</strong><span>VSI-Bench average</span></div>
+                  <div><strong>81.9</strong><span>Object counting</span></div>
+                  <div><strong>87.8</strong><span>Appearance order</span></div>
+                </div>
+                <p class="table-note">Eight categories cover measurement, configuration, navigation, and spatiotemporal reasoning.</p>
+              </div>
+            </article>
+          </div>
+
+          <div class="appendix-gallery reveal" data-tabs>
+            <div class="gallery-heading">
+              <div><p class="table-kicker">Supplementary visualizations</p><h3>Appendix qualitative results</h3></div>
+              <div class="tab-list tab-list-compact" role="tablist" aria-label="Appendix visualizations">
+                <button type="button" role="tab" aria-selected="true" aria-controls="visual-md-da2k" id="tab-visual-md-da2k" data-tab="visual-md-da2k">MD-S + DA-2K</button>
+                <button type="button" role="tab" aria-selected="false" aria-controls="visual-mdm" id="tab-visual-mdm" data-tab="visual-mdm">MD-M</button>
+                <button type="button" role="tab" aria-selected="false" aria-controls="visual-dr" id="tab-visual-dr" data-tab="visual-dr">DR</button>
+                <button type="button" role="tab" aria-selected="false" aria-controls="visual-vsi" id="tab-visual-vsi" data-tab="visual-vsi">VSI-Bench</button>
+              </div>
+            </div>
+
+            <div class="gallery-panel is-active" id="visual-md-da2k" role="tabpanel" aria-labelledby="tab-visual-md-da2k" data-panel>
+              <figure>
+                <a href="assets/results/appendix-md-da2k.webp" target="_blank" rel="noreferrer"><img src="assets/results/appendix-md-da2k.webp" alt="Appendix examples for single-image metric depth and DA-2K relative depth" width="1018" height="1415" loading="lazy"></a>
+                <figcaption>MD-S and DA-2K across unseen indoor, outdoor, non-real, and object-centric domains.</figcaption>
+              </figure>
+            </div>
+            <div class="gallery-panel" id="visual-mdm" role="tabpanel" aria-labelledby="tab-visual-mdm" data-panel>
+              <figure>
+                <a href="assets/results/appendix-mdm.webp" target="_blank" rel="noreferrer"><img src="assets/results/appendix-mdm.webp" alt="Appendix multi-image metric depth examples" width="1018" height="1230" loading="lazy"></a>
+                <figcaption>Multi-image metric depth across NRGBD, ScanNet, and KITTI scenes.</figcaption>
+              </figure>
+            </div>
+            <div class="gallery-panel" id="visual-dr" role="tabpanel" aria-labelledby="tab-visual-dr" data-panel>
+              <figure>
+                <a href="assets/results/appendix-dr.webp" target="_blank" rel="noreferrer"><img src="assets/results/appendix-dr.webp" alt="Appendix depth-related reasoning examples with depth and camera-ray predictions" width="1018" height="1230" loading="lazy"></a>
+                <figcaption>Depth-related reasoning with predicted depth maps and camera-ray constraints.</figcaption>
+              </figure>
+            </div>
+            <div class="gallery-panel gallery-panel-wide" id="visual-vsi" role="tabpanel" aria-labelledby="tab-visual-vsi" data-panel>
+              <figure>
+                <a href="assets/results/appendix-vsi-1.webp" target="_blank" rel="noreferrer"><img src="assets/results/appendix-vsi-1.webp" alt="Appendix VSI-Bench examples part one" width="2130" height="1335" loading="lazy"></a>
+                <a href="assets/results/appendix-vsi-2.webp" target="_blank" rel="noreferrer"><img src="assets/results/appendix-vsi-2.webp" alt="Appendix VSI-Bench examples part two" width="2130" height="1345" loading="lazy"></a>
+                <figcaption>Eight VSI-Bench task categories spanning metric, configurational, and spatiotemporal reasoning.</figcaption>
+              </figure>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="appendix">
+        <div class="section-inner">
+          <div class="section-heading section-heading-split reveal">
+            <div>
+              <p class="eyebrow">05 / Appendix Analysis</p>
+              <h2>Why the spatial side path works, and where it does not.</h2>
+            </div>
+            <p>Supplementary experiments isolate parameter efficiency, supervision, architecture choices, cross-domain depth gains, and remaining temporal limitations.</p>
+          </div>
+
+          <div class="appendix-analysis-grid">
+            <article class="analysis-block reveal">
+              <div class="analysis-heading"><span>A</span><div><h3>Comparable-budget LoRA</h3><p>The non-invasive side path is stronger than directly adapting the backbone.</p></div></div>
+              <div class="paper-table-wrap">
+                <table class="paper-table paper-table-compact">
+                  <thead><tr><th>Method</th><th>VSI</th><th>ScanQA C</th><th>SQA3D ER1</th></tr></thead>
+                  <tbody><tr><td>LoRA, r=16, &alpha;=64</td><td>69.8</td><td>97.2</td><td>55.7</td></tr><tr class="ours-row"><td>SpatioLM</td><td><strong>71.6</strong></td><td><strong>101.8</strong></td><td><strong>58.6</strong></td></tr></tbody>
+                </table>
+              </div>
+            </article>
+
+            <article class="analysis-block reveal">
+              <div class="analysis-heading"><span>B</span><div><h3>Component ablation</h3><p>VTS and dense geometric supervision provide complementary gains.</p></div></div>
+              <div class="paper-table-wrap">
+                <table class="paper-table paper-table-compact">
+                  <thead><tr><th>SV</th><th>VTS</th><th>DGS</th><th>MD-S</th><th>DA-2K</th><th>VSI</th></tr></thead>
+                  <tbody>
+                    <tr><td>-</td><td>-</td><td>-</td><td>52.6</td><td>71.8</td><td>68.7</td></tr>
+                    <tr><td>&check;</td><td>-</td><td>-</td><td>74.7</td><td>84.0</td><td>69.1</td></tr>
+                    <tr><td>&check;</td><td>&check;</td><td>-</td><td>76.9</td><td>82.4</td><td>69.6</td></tr>
+                    <tr><td>&check;</td><td>-</td><td>&check;</td><td>81.5</td><td>83.3</td><td>70.8</td></tr>
+                    <tr class="ours-row"><td>&check;</td><td>&check;</td><td>&check;</td><td><strong>83.5</strong></td><td>83.8</td><td><strong>71.6</strong></td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </article>
+
+            <article class="analysis-block analysis-block-wide reveal">
+              <div class="analysis-heading"><span>C</span><div><h3>Cross-domain depth gains</h3><p>Both backbones improve across single-image, multi-image, relative-depth, and physical-reasoning tasks.</p></div></div>
+              <div class="paper-table-wrap">
+                <table class="paper-table">
+                  <thead><tr><th>Backbone</th><th>MD-S</th><th>&Delta;</th><th>MD-M</th><th>&Delta;</th><th>DA-2K</th><th>&Delta;</th><th>DR</th><th>&Delta;</th></tr></thead>
+                  <tbody>
+                    <tr><td>InternVL3.5-8B</td><td>41.0 &rarr; 50.9</td><td class="delta-positive">+9.9</td><td>28.3 &rarr; 32.0</td><td class="delta-positive">+3.7</td><td>60.3 &rarr; 81.7</td><td class="delta-positive">+21.4</td><td>10.2 &rarr; 24.1</td><td class="delta-positive">+13.9</td></tr>
+                    <tr class="ours-row"><td>SenseNovaSI-8B</td><td>52.6 &rarr; 83.5</td><td class="delta-positive">+30.9</td><td>37.7 &rarr; 69.0</td><td class="delta-positive">+31.3</td><td>71.8 &rarr; 83.8</td><td class="delta-positive">+12.0</td><td>17.5 &rarr; 41.8</td><td class="delta-positive">+24.3</td></tr>
+                  </tbody>
+                </table>
+              </div>
+              <p class="table-note">MD-S includes SUN RGB-D, NYU-v2, and Waymo; MD-M includes NRGBD, ScanNet, and KITTI. Several domains are strictly unseen during training.</p>
+            </article>
+
+            <article class="analysis-block reveal">
+              <div class="analysis-heading"><span>D</span><div><h3>Architecture choices</h3><p>Alternating attention improves cross-frame geometry; six SV-Blocks give the best efficiency tradeoff.</p></div></div>
+              <div class="split-mini-tables">
+                <table class="paper-table paper-table-compact">
+                  <thead><tr><th>Attention</th><th>VSI</th><th>ScanQA C</th><th>ER1</th></tr></thead>
+                  <tbody><tr><td>Self</td><td>70.4</td><td>98.7</td><td>56.8</td></tr><tr class="ours-row"><td>Alternating</td><td>71.6</td><td>101.8</td><td>58.6</td></tr></tbody>
+                </table>
+                <table class="paper-table paper-table-compact">
+                  <thead><tr><th>SV-Blocks</th><th>MD-S</th><th>DA-2K</th><th>VSI</th></tr></thead>
+                  <tbody><tr><td>4</td><td>76.5</td><td>82.4</td><td>71.3</td></tr><tr class="ours-row"><td>6</td><td>83.5</td><td>83.8</td><td>71.6</td></tr><tr><td>8</td><td>83.0</td><td>83.1</td><td>71.7</td></tr><tr><td>12</td><td>82.9</td><td>83.7</td><td>71.5</td></tr></tbody>
+                </table>
+              </div>
+            </article>
+
+            <article class="analysis-block reveal">
+              <div class="analysis-heading"><span>E</span><div><h3>Failure consistency</h3><p>Route planning remains constrained by long-horizon memory inherited from the base VLM.</p></div></div>
+              <div class="paper-table-wrap">
+                <table class="paper-table paper-table-compact">
+                  <thead><tr><th>VSI task</th><th>Ours fail</th><th>Base fail</th><th>Shared</th><th>Consistency</th></tr></thead>
+                  <tbody><tr><td>Route planning</td><td>101</td><td>100</td><td>96</td><td><strong>95.0%</strong></td></tr><tr><td>Relative direction</td><td>120</td><td>166</td><td>64</td><td>53.3%</td></tr></tbody>
+                </table>
+              </div>
+            </article>
+
+            <article class="analysis-block analysis-block-wide reveal">
+              <div class="analysis-heading"><span>F</span><div><h3>MVBench degradation analysis</h3><p>Losses concentrate in motion and action semantics, while several scene-level reasoning tasks are preserved or improve.</p></div></div>
+              <div class="paper-table-wrap">
+                <table class="paper-table">
+                  <thead><tr><th>Category</th><th>Subtask</th><th>&Delta; InternVL3.5</th><th>&Delta; SenseNovaSI</th></tr></thead>
+                  <tbody>
+                    <tr><td>Motion dynamics</td><td>Moving direction</td><td class="delta-negative">-30.5</td><td class="delta-negative">-25.0</td></tr>
+                    <tr><td>Motion dynamics</td><td>Moving attribute</td><td class="delta-negative">-25.5</td><td class="delta-negative">-10.5</td></tr>
+                    <tr><td>Motion dynamics</td><td>Moving count</td><td class="delta-negative">-24.0</td><td class="delta-negative">-3.5</td></tr>
+                    <tr><td>Action semantics</td><td>Action antonym</td><td class="delta-negative">-28.0</td><td class="delta-negative">-28.0</td></tr>
+                    <tr><td>Action semantics</td><td>Action count</td><td class="delta-negative">-35.5</td><td class="delta-positive">+5.0</td></tr>
+                    <tr><td>Scene reasoning</td><td>Episodic reasoning</td><td class="delta-positive">+3.0</td><td class="delta-positive">+0.5</td></tr>
+                    <tr><td>Scene reasoning</td><td>Egocentric navigation</td><td class="delta-positive">+1.5</td><td class="delta-negative">-5.0</td></tr>
+                  </tbody>
+                </table>
+              </div>
+              <p class="table-note">Selected from the full 20-subtask analysis. The paper attributes the tradeoff to geometry-oriented supervision competing with fine-grained temporal cues.</p>
+            </article>
+          </div>
+
+          <div class="sensitivity-strip reveal">
+            <div><span>Loss-weight sensitivity</span><strong>0.5 pt</strong><p>maximum VSI-Bench spread</p></div>
+            <div><span>ScanQA CIDEr range</span><strong>100.2-103.2</strong><p>across eight configurations</p></div>
+            <div><span>SQA3D ER1 range</span><strong>58.5-60.2</strong><p>stable objective balance</p></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="models">
+        <div class="section-inner">
+          <div class="section-heading section-heading-split reveal">
+            <div>
+              <p class="eyebrow">06 / Open Models</p>
+              <h2>One framework, three physical capabilities.</h2>
+            </div>
+            <p>Official checkpoints are released through the Xiaomi Research collection on Hugging Face.</p>
+          </div>
+
+          <div class="model-table-wrap reveal">
+            <table class="model-table">
+              <thead>
+                <tr><th>Checkpoint</th><th>Track</th><th>Backbone</th><th><span class="sr-only">Link</span></th></tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>SpatioLM-Understanding-InternVL3.5</td><td><span class="track">Understanding</span></td><td>InternVL3.5 8B</td>
+                  <td><a href="https://huggingface.co/xiaomi-research/SpatioLM-Understanding-InternVL3.5" aria-label="Open SpatioLM Understanding InternVL3.5">View &rarr;</a></td>
+                </tr>
+                <tr>
+                  <td>SpatioLM-Understanding-SenseNovaSI</td><td><span class="track">Understanding</span></td><td>SenseNova-SI 1.1 / InternVL3 8B</td>
+                  <td><a href="https://huggingface.co/xiaomi-research/SpatioLM-Understanding-SenseNovaSI" aria-label="Open SpatioLM Understanding SenseNovaSI">View &rarr;</a></td>
+                </tr>
+                <tr>
+                  <td>SpatioLM-Perception-InternVL3.5</td><td><span class="track">Perception</span></td><td>InternVL3.5 8B</td>
+                  <td><a href="https://huggingface.co/xiaomi-research/SpatioLM-Perception-InternVL3.5" aria-label="Open SpatioLM Perception InternVL3.5">View &rarr;</a></td>
+                </tr>
+                <tr>
+                  <td>SpatioLM-Perception-SenseNovaSI</td><td><span class="track">Perception</span></td><td>SenseNova-SI 1.1 / InternVL3 8B</td>
+                  <td><a href="https://huggingface.co/xiaomi-research/SpatioLM-Perception-SenseNovaSI" aria-label="Open SpatioLM Perception SenseNovaSI">View &rarr;</a></td>
+                </tr>
+                <tr>
+                  <td>SpatioLM-Action-VLA0</td><td><span class="track">Action</span></td><td>SenseNova-SI 1.1 / InternVL3 2B</td>
+                  <td><a href="https://huggingface.co/xiaomi-research/SpatioLM-Action-VLA0" aria-label="Open SpatioLM Action VLA0">View &rarr;</a></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="collection-link reveal">
+            <p>All checkpoints use the same SpatioLM implementation and require no additional 3D input at inference.</p>
+            <a href="https://huggingface.co/collections/xiaomi-research/spatiolm">Browse model collection &rarr;</a>
+          </div>
+        </div>
+      </section>
+
+      <section class="section citation-section" id="citation">
+        <div class="section-inner citation-layout">
+          <div class="section-heading reveal">
+            <p class="eyebrow">07 / Citation</p>
+            <h2>Build on SpatioLM.</h2>
+            <p>If this work supports your research, please cite the ICML 2026 paper.</p>
+          </div>
+          <div class="code-panel reveal">
+            <button class="copy-button" type="button" data-copy aria-label="Copy BibTeX citation">Copy</button>
+            <pre><code id="bibtex">@inproceedings{wu2026spatiolm,
+  title     = {SpatioLM: Towards General Physical Spatial
+               Intelligence in Vision-Language Models},
+  author    = {Wu, Jing and Wu, Jianhua and Guan, Jiayi and
+               Chen, Jiahong and Lu, Jinghui and Ye, Hangjun and
+               Gao, Bingzhao and Chen, Long},
+  booktitle = {International Conference on Machine Learning},
+  year      = {2026}
+}</code></pre>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="section-inner footer-inner">
+        <div>
+          <a class="brand footer-brand" href="#top">
+            <span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+            <span>SpatioLM</span>
+          </a>
+          <p>Towards general physical spatial intelligence.</p>
+        </div>
+        <div class="footer-links">
+          <a href="https://arxiv.org/abs/2608.01899">Paper</a>
+          <a href="https://github.com/xiaomi-research/spatio-lm">Code</a>
+          <a href="https://huggingface.co/collections/xiaomi-research/spatiolm">Models</a>
+          <a href="https://icml.cc/virtual/2026/poster/65576">ICML 2026</a>
+        </div>
+        <p class="copyright">&copy; 2026 SpatioLM authors</p>
+      </div>
+    </footer>
+
+    <script src="script.js"></script>
+  </body>
+</html>
