@@ -127,6 +127,18 @@ work_dirs/
 
 `MODEL_PATH` must point to a SpatioLM-compatible InternVL checkpoint. For 3D distillation, its configuration must contain the SpatioLM vision condition and DPT-head configuration. `TEACHER3D_PATH` must point to a Hugging Face-compatible Depth Anything 3 teacher checkpoint loadable by `AutoModelForDepthEstimation`.
 
+> [!NOTE]
+> The SpatioLM initialization and teacher checkpoints are derived from the following public models:
+>
+> | Usage | Public source model |
+> | --- | --- |
+> | InternVL3.5 initialization | [`OpenGVLab/InternVL3_5-8B`](https://huggingface.co/OpenGVLab/InternVL3_5-8B) |
+> | SenseNova-SI initialization | [`sensenova/SenseNova-SI-1.1-InternVL3-8B`](https://huggingface.co/sensenova/SenseNova-SI-1.1-InternVL3-8B) |
+> | VLA0 initialization | [`sensenova/SenseNova-SI-1.1-InternVL3-8B`](https://huggingface.co/sensenova/SenseNova-SI-1.1-InternVL3-8B) |
+> | Depth teacher source | [`depth-anything/DA3-LARGE`](https://huggingface.co/depth-anything/DA3-LARGE) |
+>
+> The first three entries identify the upstream VLM weights used to build the corresponding initialization checkpoints; they are not drop-in replacements for `MODEL_PATH`. Before running `spatiolm sft3d`, prepare a SpatioLM-compatible checkpoint whose `config.json` includes the required `vision_condition_config` and `vision_dpt_config` fields. Similarly, the public DA3 repository uses the official Depth Anything 3 checkpoint layout, while `TEACHER3D_PATH` currently expects the project-converted Hugging Face layout registered as `DA3Model` and loadable through `AutoModelForDepthEstimation`.
+
 <details>
 <summary><strong>Supervised JSONL format</strong></summary>
 
