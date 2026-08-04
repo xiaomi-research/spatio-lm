@@ -8,7 +8,7 @@
   <a href="https://xiaomi-research.github.io/spatio-lm/"><img src="https://img.shields.io/badge/Project_Page-Website-ff6900" alt="Project Page"></a>
 </p>
 
-> Official implementation of **SpatioLM**, accepted as an **Oral presentation at the Forty-third International Conference on Machine Learning (ICML 2026)**.
+> <a href="README.md"><img src="https://img.shields.io/badge/Language-English-blue" alt="English"></a> <a href="README.zh.md"><img src="https://img.shields.io/badge/语言-简体中文-red" alt="简体中文"></a> Official implementation of **SpatioLM**, accepted as an **Oral presentation at the Forty-third International Conference on Machine Learning (ICML 2026)**.
 
 SpatioLM is a parameter-efficient framework for improving spatial intelligence in vision-language models (VLMs). It introduces a plug-and-play spatio-vision module and uses pseudo depth and camera supervision to learn physically coherent representations, without requiring 3D inputs at inference time. The same framework supports spatial perception, spatial reasoning, and embodied manipulation tasks.
 
@@ -323,6 +323,16 @@ For video inference and batched benchmark execution, use the `slm_eval` interfac
 ## 📊 Evaluation
 
 `slm_eval` preserves the LMMs-Eval CLI and automatically registers the additional SpatioLM models and tasks.
+
+Download the SpatioLM depth benchmark in its `load_from_disk` layout:
+
+```bash
+hf download edatai/spatiolm-depth \
+  --repo-type dataset \
+  --local-dir data/eval/spatiolm_depth
+```
+
+See [`src/slm_eval/README.md`](src/slm_eval/README.md) for the depth benchmark splits, metrics, and evaluation commands.
 
 <details>
 <summary><strong>Evaluate a local checkpoint</strong></summary>
