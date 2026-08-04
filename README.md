@@ -2,9 +2,9 @@
 
 <p align="center">
   <a href="https://openreview.net/forum?id=CHavqrN1X9"><img src="https://img.shields.io/badge/Paper-OpenReview-b31b1b?logo=openreview&amp;logoColor=white" alt="Paper: OpenReview"></a>
-  <a href="https://arxiv.org/abs/2608.01899"><img src="https://img.shields.io/badge/Paper-arXiv-b31b1b?logo=arxiv&amp;logoColor=white" alt="Paper: arXiv"></a>
+  <a href="https://arxiv.org/abs/2608.01899"><img src="https://img.shields.io/badge/Paper-arXiv-b31b1b?logo=arxiv&amp;logoColor=red" alt="Paper: arXiv"></a>
   <a href="https://icml.cc/virtual/2026/poster/65576"><img src="https://img.shields.io/badge/ICML_2026-Oral-4c78a8" alt="ICML 2026 Oral"></a>
-  <img src="https://img.shields.io/badge/Model_Weights-Coming_Soon-9ca3af?logo=huggingface&amp;logoColor=white" alt="Model Weights: Coming Soon">
+  <a href="https://huggingface.co/collections/xiaomi-research/spatiolm"><img src="https://img.shields.io/badge/Model_Weights-Hugging_Face-ffd21e?logo=huggingface&amp;logoColor=yellow" alt="Model Weights: Hugging Face"></a>
   <img src="https://img.shields.io/badge/Project_Page-Coming_Soon-9ca3af" alt="Project Page: Coming Soon">
 </p>
 
@@ -27,11 +27,26 @@ SpatioLM is a parameter-efficient framework for improving spatial intelligence i
 
 ## 📦 Release Status
 
-This repository contains the model implementation, the 3D distillation trainer, data loaders, and evaluation tasks. Model checkpoints and benchmark datasets are not stored in Git. Download or prepare them separately, then pass their local paths through the commands below.
+This repository contains the model implementation, the 3D distillation trainer, data loaders, and evaluation tasks. Official checkpoints are available in the [SpatioLM collection on Hugging Face](https://huggingface.co/collections/xiaomi-research/spatiolm). Benchmark datasets are not stored in Git; prepare them separately and pass their local paths through the commands below.
+
+## 🤗 Model Zoo
+
+The released checkpoints cover three complementary capabilities: **Understanding** for spatial reasoning and scene understanding, **Perception** for metric depth and physical spatial perception, and **Action** for embodied manipulation with discrete VLA actions. The Understanding and Perception tracks are each available with two 8B vision-language backbones.
+
+| Checkpoint | Capability | Backbone | Intended use |
+| --- | --- | --- | --- |
+| [SpatioLM-Understanding-InternVL3.5](https://huggingface.co/xiaomi-research/SpatioLM-Understanding-InternVL3.5) | Understanding | InternVL3.5 8B | Spatial reasoning and scene understanding |
+| [SpatioLM-Understanding-SenseNovaSI](https://huggingface.co/xiaomi-research/SpatioLM-Understanding-SenseNovaSI) | Understanding | SenseNova-SI 1.1 / InternVL3 8B | Spatial reasoning and scene understanding |
+| [SpatioLM-Perception-InternVL3.5](https://huggingface.co/xiaomi-research/SpatioLM-Perception-InternVL3.5) | Perception | InternVL3.5 8B | Metric depth and physical spatial perception |
+| [SpatioLM-Perception-SenseNovaSI](https://huggingface.co/xiaomi-research/SpatioLM-Perception-SenseNovaSI) | Perception | SenseNova-SI 1.1 / InternVL3 8B | Metric depth and physical spatial perception |
+| [SpatioLM-Action-VLA0](https://huggingface.co/xiaomi-research/SpatioLM-Action-VLA0) | Action | SenseNova-SI 1.1 / InternVL3 2B | Embodied manipulation with discrete VLA actions |
+
+All checkpoints use the SpatioLM model implementation in this repository and require no additional 3D input at inference time. Use an Understanding checkpoint for general spatial question answering, a Perception checkpoint when metric geometry is central to the task, and the Action checkpoint for embodied control.
 
 ## 🛠️ Installation
 
-### Requirements
+<details>
+<summary><strong>Requirements</strong></summary>
 
 - Linux
 - Python 3.10 recommended
@@ -52,7 +67,10 @@ The code has been tested with the following stack:
 | DeepSpeed | 0.18.4 |
 | FlashAttention | 2.7.4.post1 |
 
-### Create the environment
+</details>
+
+<details>
+<summary><strong>Create the environment</strong></summary>
 
 Run the following commands from the repository root. Change the PyTorch wheel index if your CUDA runtime is not compatible with CUDA 12.4.
 
@@ -85,6 +103,8 @@ spatiolm sft3d --help
 slm_eval --help
 ```
 
+</details>
+
 ## 🗂️ Model and Data Preparation
 
 A typical local layout is:
@@ -107,7 +127,8 @@ work_dirs/
 
 `MODEL_PATH` must point to a SpatioLM-compatible InternVL checkpoint. For 3D distillation, its configuration must contain the SpatioLM vision condition and DPT-head configuration. `TEACHER3D_PATH` must point to a Hugging Face-compatible Depth Anything 3 teacher checkpoint loadable by `AutoModelForDepthEstimation`.
 
-### Supervised JSONL format
+<details>
+<summary><strong>Supervised JSONL format</strong></summary>
 
 Training data follows the MS-SWIFT multimodal JSONL format. Each line contains a conversation and either `images` or `videos`:
 
@@ -121,7 +142,10 @@ Training data follows the MS-SWIFT multimodal JSONL format. Each line contains a
 
 Media paths may be absolute or relative to the directory from which training is launched. The number of `<image>` or `<video>` placeholders must match the supplied media.
 
-### Optional DepthLM raw data
+</details>
+
+<details>
+<summary><strong>Optional DepthLM raw data</strong></summary>
 
 The built-in DepthLM dataset generates spatial questions from RGB videos, metric depth, camera intrinsics, and camera poses. Each video must have a sidecar HDF5 file with the same stem:
 
@@ -147,9 +171,12 @@ DEPTH_DATASET='torch::cvlm3d/depthlm::data_root="data/train-v3r",video_folders=[
 
 Append `#N` to the identifier to sample or repeat it to `N` examples, for example `torch::cvlm3d/depthlm#1000::...`.
 
+</details>
+
 ## 🚀 Training
 
-### 3D-supervised training
+<details>
+<summary><strong>3D-supervised training</strong></summary>
 
 The main training entry point combines language-model loss with token, depth, and camera-ray distillation losses.
 
@@ -200,7 +227,10 @@ To combine regular JSONL data with the generated DepthLM dataset, replace the `-
 --dataset "$TRAIN_JSONL" "$DEPTH_DATASET"
 ```
 
-### Standard supervised fine-tuning
+</details>
+
+<details>
+<summary><strong>Standard supervised fine-tuning</strong></summary>
 
 Use MS-SWIFT directly when 3D teacher distillation is not required. The custom registration file enables the SpatioLM model and template definitions.
 
@@ -229,9 +259,14 @@ swift sft \
 
 The effective global batch size is `per_device_train_batch_size × gradient_accumulation_steps × number_of_GPUs × number_of_nodes`.
 
+</details>
+
 ## 🔍 Inference
 
-The following example runs image inference from a local SpatioLM checkpoint:
+The Understanding and Perception checkpoints share the same image-inference interface. Set `checkpoint` to a Hugging Face model ID from the table above or to a downloaded local path:
+
+<details>
+<summary><strong>Image inference example</strong></summary>
 
 ```python
 import torch
@@ -241,7 +276,7 @@ from transformers import AutoTokenizer
 
 from spatiolm.models import InternVL3RChatModel
 
-checkpoint = "/path/to/spatiolm-checkpoint"
+checkpoint = "xiaomi-research/SpatioLM-Understanding-InternVL3.5"
 image_path = "/path/to/image.jpg"
 
 model = InternVL3RChatModel.from_pretrained(
@@ -269,13 +304,16 @@ answer = model.chat(
 print(answer)
 ```
 
+</details>
+
 For video inference and batched benchmark execution, use the `slm_eval` interface below. Set `VIDEO_SEGMENTS` to control the number of sampled frames.
 
 ## 📊 Evaluation
 
 `slm_eval` preserves the LMMs-Eval CLI and automatically registers the additional SpatioLM models and tasks.
 
-### Local checkpoint
+<details>
+<summary><strong>Evaluate a local checkpoint</strong></summary>
 
 ```bash
 export CHECKPOINT=/path/to/spatiolm-checkpoint
@@ -302,7 +340,10 @@ accelerate launch --multi_gpu --num_processes 8 -m slm_eval \
   --output_path work_dirs/eval/site_bench_video
 ```
 
-### OpenAI-compatible API
+</details>
+
+<details>
+<summary><strong>Evaluate an OpenAI-compatible API</strong></summary>
 
 Any endpoint implementing the OpenAI Chat Completions interface can be evaluated with the parallel API adapter:
 
@@ -320,6 +361,8 @@ slm_eval \
 ```
 
 For Azure OpenAI, set `azure_openai=true` in `--model_args` and export `AZURE_OPENAI_API_KEY`, `AZURE_OPENAI_API_BASE`, and `AZURE_OPENAI_API_VERSION`.
+
+</details>
 
 ### Included spatial tasks
 
