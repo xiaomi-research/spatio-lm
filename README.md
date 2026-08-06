@@ -154,6 +154,73 @@ Training data follows the MS-SWIFT multimodal JSONL format. Each line contains a
 
 Media paths may be absolute or relative to the directory from which training is launched. The number of `<image>` or `<video>` placeholders must match the supplied media.
 
+For preparing VSI-590K-style annotations, use [`scripts/data/README.md`](scripts/data/README.md). The included converter defaults relative media paths to the `--input` directory, validates every record, and writes a training-ready JSONL file without requiring private dataset paths.
+
+```bash
+python scripts/data/prepare_vlm_data.py \
+  --input data/raw/VSI-590K \
+  --output data/train-vlm/vlm-3d/VSI-590K
+```
+
+The same guide also documents downloading the public VSI-590K annotations and media archives, including selective downloads and HTTP proxy configuration.
+
+<details>
+<summary><strong>Download VSI-590K</strong></summary>
+
+Install the Hugging Face Hub CLI:
+
+```bash
+pip install -U huggingface_hub
+```
+
+Download the annotation file only:
+
+```bash
+hf download nyu-visionx/VSI-590K \
+  --repo-type dataset \
+  --include vsi_590k.jsonl \
+  --local-dir data/raw/VSI-590K
+```
+
+Download the annotation file and all media archives:
+
+```bash
+hf download nyu-visionx/VSI-590K \
+  --repo-type dataset \
+  --include vsi_590k.jsonl \
+  --include '*.tar.gz' \
+  --local-dir data/raw/VSI-590K
+```
+
+Download only selected source archives:
+
+```bash
+hf download nyu-visionx/VSI-590K \
+  --repo-type dataset \
+  --include vsi_590k.jsonl \
+  --include scannet.tar.gz \
+  --include scannetppv2.tar.gz \
+  --local-dir data/raw/VSI-590K
+```
+
+If direct access is unavailable, configure a proxy before downloading:
+
+```bash
+export HTTP_PROXY=http://127.0.0.1:7890
+export HTTPS_PROXY=http://127.0.0.1:7890
+export ALL_PROXY=http://127.0.0.1:7890
+```
+
+Then run any `hf download` command above. Extract downloaded archives under
+the same dataset root:
+
+```bash
+find data/raw/VSI-590K -maxdepth 1 -name '*.tar.gz' -print0 \
+  | xargs -0 -n1 tar -xzf - -C data/raw/VSI-590K
+```
+
+</details>
+
 </details>
 
 <details>

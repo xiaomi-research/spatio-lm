@@ -9,6 +9,9 @@
 pixi.lock
 pixi.toml
 data
+!scripts/data/
+!scripts/data/**
+scripts/data/__pycache__/
 notebooks
 work_dirs
 outputs

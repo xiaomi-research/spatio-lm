@@ -154,6 +154,72 @@ work_dirs/
 
 媒体路径可以是绝对路径，也可以是相对于训练启动目录的路径。`<image>` 或 `<video>` 占位符的数量必须与提供的媒体数量一致。
 
+准备 VSI-590K 类指令数据时，可以使用 [`scripts/data/README.md`](scripts/data/README.md) 中的脚本和说明。脚本默认将相对媒体路径解析到 `--input` 目录，不依赖远程机器路径，并会在训练前检查 JSON、媒体文件和占位符数量。
+
+```bash
+python scripts/data/prepare_vlm_data.py \
+  --input data/raw/VSI-590K \
+  --output data/train-vlm/vlm-3d/VSI-590K
+```
+
+同一份说明还包含公开 VSI-590K 标注和媒体归档的下载方法，包括按需下载以及 HTTP 代理配置。
+
+<details>
+<summary><strong>下载 VSI-590K</strong></summary>
+
+先安装 Hugging Face Hub CLI：
+
+```bash
+pip install -U huggingface_hub
+```
+
+只下载标注文件：
+
+```bash
+hf download nyu-visionx/VSI-590K \
+  --repo-type dataset \
+  --include vsi_590k.jsonl \
+  --local-dir data/raw/VSI-590K
+```
+
+下载标注文件和全部媒体归档：
+
+```bash
+hf download nyu-visionx/VSI-590K \
+  --repo-type dataset \
+  --include vsi_590k.jsonl \
+  --include '*.tar.gz' \
+  --local-dir data/raw/VSI-590K
+```
+
+只下载指定数据源：
+
+```bash
+hf download nyu-visionx/VSI-590K \
+  --repo-type dataset \
+  --include vsi_590k.jsonl \
+  --include scannet.tar.gz \
+  --include scannetppv2.tar.gz \
+  --local-dir data/raw/VSI-590K
+```
+
+如果无法直连 Hugging Face，可以先设置代理：
+
+```bash
+export HTTP_PROXY=http://127.0.0.1:7890
+export HTTPS_PROXY=http://127.0.0.1:7890
+export ALL_PROXY=http://127.0.0.1:7890
+```
+
+然后执行上面的任意下载命令。下载完成后，将归档解压到同一个数据集目录：
+
+```bash
+find data/raw/VSI-590K -maxdepth 1 -name '*.tar.gz' -print0 \
+  | xargs -0 -n1 tar -xzf - -C data/raw/VSI-590K
+```
+
+</details>
+
 </details>
 
 <details>
